@@ -82,7 +82,7 @@ CREATE TABLE people (
 #SELECT * FROM people;
 
 # Section 5
-# Populate people with six people.
+# Populate people with 10 people.
 # Their last names must exactly be “Person 1”, “Person 2”, etc.
 # Other fields are for you to assign.
 
@@ -92,7 +92,11 @@ insert into people (people_id,people_first_name,people_discord_handle,people_dat
   (3, 'Marshall', 'Eriksen', '2000-09-19','Person 3'),
   (4, 'Lily', 'Aldrin', '2000-09-19','Person 4'),
   (5, 'Barney', 'Stinson', '2005-09-19','Person 5'),
-  (6, 'Tracy', 'McConnell', '2013-05-27','Person 6');
+  (6, 'Tracy', 'McConnell', '2013-05-27','Person 6'),
+  (7, 'Marvin', 'Eriksen', '2009-01-13', 'Person 7'),
+  (8, 'Ranjit', 'Singh', '2003-09-22', 'Person 8'),
+  (9, 'Quinn', 'Garvey', '2011-11-17', 'Person 9'),
+  (10, 'Sandy', 'Rivers', '2006-08-15', 'Person 10');
 
 #SELECT * FROM people;
 
