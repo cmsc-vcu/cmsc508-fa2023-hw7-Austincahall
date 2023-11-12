@@ -18,7 +18,10 @@
 
 SET FOREIGN_KEY_CHECKS=0;
 DROP TABLE IF EXISTS people;
-DROP TABLE IF EXISTS skills
+DROP TABLE IF EXISTS skills;
+DROP TABLE IF EXISTS peopleskills;
+DROP TABLE IF EXISTS roles;
+DROP TABLE IF EXISTS peopleroles;
 # ... 
 SET FOREIGN_KEY_CHECKS=1;
 
@@ -120,12 +123,59 @@ CREATE TABLE peopleskills (
 # Person 9 has skills 2,5,6;
 # Person 10 has skills 1,4,5;
 # Note that no one has yet acquired skills 7 and 8.
- 
+
+insert into peopleskills ( peopleskills_skills_id, peopleskills_people_id, peopleskills_date_acquired) values
+-- Person 1
+  (1, 1, '2023-01-01'),
+  (3, 1, '2023-02-01'),
+  (6, 1, '2023-03-01'),
+  -- Person 2
+  (3, 2, '2023-01-01'),
+  (4, 2, '2023-02-01'),
+  (5, 2, '2023-03-01'),
+
+  -- Person 3
+  (1, 3, '2023-01-01'),
+  (5, 3, '2023-02-01'),
+  -- Person 5
+  (3, 5, '2023-01-01'),
+  (6, 5, '2023-02-01'),
+
+  -- Person 6
+  (2, 6, '2023-01-01'),
+  (3, 6, '2023-02-01'),
+  (4, 6, '2023-03-01'),
+
+  -- Person 7
+  (3, 7, '2023-01-01'),
+  (5, 7, '2023-02-01'),
+  (6, 7, '2023-03-01'),
+
+  -- Person 8
+  (1, 8, '2023-01-01'),
+  (3, 8, '2023-02-01'),
+  (5, 8, '2023-03-01'),
+  (6, 8, '2023-04-01'),
+
+  -- Person 9
+  (2, 9, '2023-01-01'),
+  (5, 9, '2023-02-01'),
+  (6, 9, '2023-03-01'),
+
+  -- Person 10
+  (1, 10, '2023-01-01'),
+  (4, 10, '2023-02-01'),
+  (5, 10, '2023-03-01');
 
 # Section 8
 # Create roles( id, name, sort_priority )
 # sort_priority is an integer and is used to provide an order for sorting roles
 
+CREATE TABLE roles (
+    roles_id int,
+    roles_name varchar(255),
+    roles_sort_priority int
+);
 
 
 # Section 9
@@ -133,12 +183,28 @@ CREATE TABLE peopleskills (
 # Designer, Developer, Recruit, Team Lead, Boss, Mentor
 # Sort priority is assigned numerically in the order listed above (Designer=10, Developer=20, Recruit=30, etc.)
 
+INSERT INTO roles (roles_id ,roles_name ,roles_sort_priority) values
+    (1,'Designer',10),
+    (2,'Developer',20),
+    (3,'Recruit',30),
+    (4,'Team Lead',40),
+    (5,'Boss',50),
+    (6,'Mentor',60);
 
+
+#SELECT * FROM roles
 
 # Section 10
 # Create peopleroles( id, people_id, role_id, date_assigned )
 # None of the fields can be null.  ID can be auto_increment
 
+CREATE TABLE peopleroles (
+    peopleroles_id INT AUTO_INCREMENT,
+    peopleroles_people_id INT NOT NULL,
+    peopleroles_role_id INT NOT NULL,
+    peopleroles_date_assigned DATE NOT NULL,
+    PRIMARY KEY (peopleroles_id)
+);
 
 
 # Section 11
@@ -154,3 +220,22 @@ CREATE TABLE peopleskills (
 # Person 9 is Developer
 # Person 10 is Developer and Designer
 
+
+INSERT INTO peopleroles (peopleroles_people_id,peopleroles_role_id,peopleroles_date_assigned ) values
+(1,2, '2000-03-15'),
+(2,5, '2000-03-15'),
+(2,6, '2000-03-15'),
+(3,2, '2000-03-15'),
+(3,4, '2000-03-15'),
+(4,3, '2000-03-15'),
+(5,3, '2000-03-15'),
+(6,2, '2000-03-15'),
+(6,1, '2000-03-15'),
+(7,1, '2000-03-15'),
+(8,1, '2000-03-15'),
+(8,4, '2000-03-15'),
+(9,2, '2000-03-15'),
+(10,2, '2000-03-15'),
+(10,1, '2000-03-15');
+
+#SELECT * FROM peopleroles;
