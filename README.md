@@ -1,1 +1,2 @@
-# cmsc508-fa2023-hw7-template
+
+this file is here to be read by whom it may concern regarding my hw 7 tables. The characters/people used in this are from how I met your mother and the skills are an assortment of ones I came up with while watching the show. this is a great assignment for learning how to use databases and manipulate them/ select cerytain infor using SQL statements.
