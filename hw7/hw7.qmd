@@ -1,6 +1,6 @@
 ---
 title: Homework 7 - Creating a resume database
-author: (your name goes here!)
+author: Austin Cahall
 date: last-modified
 format:
     html:
@@ -10,11 +10,10 @@ format:
         code-copy: true
 ---
 
-(include a brief description of what is in this document)
+This document is a breakdown of the database of people who have skills, roles and jobs. it puts on display a few structured queries and complete tables to show what they look like.
 
-(Please clean up any comments that I included.  This is a scaffold document.)
 
-GITHUB URL:  <your URL goes here!>
+GITHUB URL:  https://github.com/cmsc-vcu/cmsc508-fa2023-hw7-Austincahall
 
 ```{python}
 #| eval: true
@@ -92,7 +91,8 @@ except Exception as e:
 
 ## Overview and description
 
-(briefly describe the project and the database)
+the project is a database consisting of 5 tables (people,skills,peopleskills,roles,peopleroles). these tables have been populated with data following certain rules. the names are from How I Met Your Mother.
+
 
 ## Crows-foot diagram
 
@@ -101,15 +101,45 @@ except Exception as e:
 ```{mermaid}
 %%| echo: false
 erDiagram
-    CUSTOMER ||--o{ ORDER : places
-    CUSTOMER }|..|{ DELIVERY-ADDRESS : uses
-    CUSTOMER{
-        int id
-        string first_name
-        string last_name
+    people ||--o{ peopleskills: "has"
+    skills ||--o{ peopleskills: "acquires"
+    people ||--o{ peopleroles: "has"
+    roles ||--o{ peopleroles: "assigned_to"
+    skills {
+        int skills_id
+        varchar(255) skills_name
+        varchar(255) skills_description
+        varchar(255) skills_tag
+        varchar(255) skills_url
+        int skills_time_commitment
     }
-    DELIVERY-ADDRESS {
-        int id
+    people {
+        int people_id
+        varchar(255) people_first_name
+        varchar(256) people_last_name
+        varchar(255) people_email
+        varchar(255) people_linkedin_url
+        varchar(255) people_headshoturl
+        varchar(255) people_discord_handle
+        varchar(255) people_brief_bio
+        date people_date_joined
+    }
+    peopleskills {
+        int peopleskills_id
+        int peopleskills_skills_id
+        int peopleskills_people_id
+        date peopleskills_date_acquired
+    }
+    roles {
+        int roles_id
+        varchar(255) roles_name
+        int roles_sort_priority
+    }
+    peopleroles {
+        int peopleroles_id
+        int peopleroles_people_id
+        int peopleroles_role_id
+        date peopleroles_date_assigned
     }
 ```
 
@@ -149,8 +179,18 @@ Below is a list of data in the *skills* table.
 ```{python}
 #| echo: false
 #| eval: true
-
+sql = f"""
+select * from skills;
+"""
 ## Add code to list roles table here
+try:
+    df = pd.read_sql(sql,cnx)
+    df
+except Exception as e:
+    message = str(e)
+    print(f"An error occurred:\n\n{message}\n\nIgnoring and moving on.")
+    df = pd.DataFrame()
+df
 ```
 
 ### Roles table
@@ -162,8 +202,18 @@ Below is a list of data in the *roles* table.
 ```{python}
 #| echo: false
 #| eval: true
-
+sql = f"""
+select * from roles;
+"""
 ## Add code to list roles table here
+try:
+    df = pd.read_sql(sql,cnx)
+    df
+except Exception as e:
+    message = str(e)
+    print(f"An error occurred:\n\n{message}\n\nIgnoring and moving on.")
+    df = pd.DataFrame()
+df
 ```
 
 
@@ -200,30 +250,179 @@ df
 
 
 ### List people names and email addresses ordered by last_name
-
+```{python}
+#| echo: false
+#| eval: true
+sql = f"""
+select people_first_name, people_last_name, people_email from people order by people_last_name;
+"""
+## Add code to list roles table here
+try:
+    df = pd.read_sql(sql,cnx)
+    df
+except Exception as e:
+    message = str(e)
+    print(f"An error occurred:\n\n{message}\n\nIgnoring and moving on.")
+    df = pd.DataFrame()
+df
+```
 
 ### List skill names of Person 1
-
+```{python}
+#| echo: false
+#| eval: true
+sql = f"""
+SELECT skills.skills_name
+FROM people
+JOIN peopleskills ON people.people_id = peopleskills.peopleskills_people_id
+JOIN skills ON peopleskills.peopleskills_skills_id = skills.skills_id
+WHERE people.people_id = 1;
+"""
+## Add code to list roles table here
+try:
+    df = pd.read_sql(sql,cnx)
+    df
+except Exception as e:
+    message = str(e)
+    print(f"An error occurred:\n\n{message}\n\nIgnoring and moving on.")
+    df = pd.DataFrame()
+df
+```
 
 ### List people names with Skill 6
+```{python}
+#| echo: false
+#| eval: true
+sql = f"""
+SELECT people.people_first_name
+FROM people
+JOIN peopleskills ON people.people_id = peopleskills.peopleskills_people_id
+JOIN skills ON peopleskills.peopleskills_skills_id = skills.skills_id
+WHERE skills_id = 6;
+"""
+## Add code to list roles table here
+try:
+    df = pd.read_sql(sql,cnx)
+    df
+except Exception as e:
+    message = str(e)
+    print(f"An error occurred:\n\n{message}\n\nIgnoring and moving on.")
+    df = pd.DataFrame()
+df
+```
 
 
 ### List people with a DEVELOPER role
-
+```{python}
+#| echo: false
+#| eval: true
+sql = f"""
+SELECT people.people_id, people.people_first_name, people.people_last_name
+FROM people
+JOIN peopleroles ON people.people_id = peopleroles.peopleroles_people_id
+JOIN roles ON peopleroles.peopleroles_role_id = roles.roles_id
+WHERE roles.roles_name = 'Developer';
+"""
+## Add code to list roles table here
+try:
+    df = pd.read_sql(sql,cnx)
+    df
+except Exception as e:
+    message = str(e)
+    print(f"An error occurred:\n\n{message}\n\nIgnoring and moving on.")
+    df = pd.DataFrame()
+df
+```
 
 ### List names and email addresses of people without skills
-
+```{python}
+#| echo: false
+#| eval: true
+sql = f"""
+SELECT people.people_first_name, people.people_last_name, people.people_email
+FROM people
+LEFT JOIN peopleskills ON people.people_id = peopleskills.peopleskills_people_id
+WHERE peopleskills.peopleskills_id IS NULL;
+"""
+## Add code to list roles table here
+try:
+    df = pd.read_sql(sql,cnx)
+    df
+except Exception as e:
+    message = str(e)
+    print(f"An error occurred:\n\n{message}\n\nIgnoring and moving on.")
+    df = pd.DataFrame()
+df
+```
 
 ### List names and tags of unused skills
-
+```{python}
+#| echo: false
+#| eval: true
+sql = f"""
+SELECT skills.skills_name, skills.skills_tag
+FROM skills
+LEFT JOIN peopleskills ON skills.skills_id = peopleskills.peopleskills_skills_id
+WHERE peopleskills.peopleskills_id IS NULL;
+"""
+## Add code to list roles table here
+try:
+    df = pd.read_sql(sql,cnx)
+    df
+except Exception as e:
+    message = str(e)
+    print(f"An error occurred:\n\n{message}\n\nIgnoring and moving on.")
+    df = pd.DataFrame()
+df
+```
 
 ### List people names and skill names with the BOSS role
-
+```{python}
+#| echo: false
+#| eval: true
+sql = f"""
+SELECT people.people_first_name, people.people_last_name, skills.skills_name
+FROM people
+JOIN peopleroles ON people.people_id = peopleroles.peopleroles_people_id
+JOIN roles ON peopleroles.peopleroles_role_id = roles.roles_id
+LEFT JOIN peopleskills ON people.people_id = peopleskills.peopleskills_people_id
+LEFT JOIN skills ON peopleskills.peopleskills_skills_id = skills.skills_id
+WHERE roles.roles_name = 'Boss';
+"""
+## Add code to list roles table here
+try:
+    df = pd.read_sql(sql,cnx)
+    df
+except Exception as e:
+    message = str(e)
+    print(f"An error occurred:\n\n{message}\n\nIgnoring and moving on.")
+    df = pd.DataFrame()
+df
+```
 
 ### List ids and names of unused roles
-
+```{python}
+#| echo: false
+#| eval: true
+sql = f"""
+SELECT roles.roles_id, roles.roles_name
+FROM roles
+LEFT JOIN peopleroles ON roles.roles_id = peopleroles.peopleroles_role_id
+WHERE peopleroles.peopleroles_id IS NULL;
+"""
+## Add code to list roles table here
+try:
+    df = pd.read_sql(sql,cnx)
+    df
+except Exception as e:
+    message = str(e)
+    print(f"An error occurred:\n\n{message}\n\nIgnoring and moving on.")
+    df = pd.DataFrame()
+df
+```
 
 ## Reflection
 
-(Write a paragraph expressing your thoughts, feelings, and insights about your experience with this assignment.  Pause and breath before writing - I'm trying to encourage critical thinking and self-awareness while allowing you to explore the connections between theory and practice. And yes, delete this paragraph.)
+I really enjoyed this assignment especially because we could make it our own with names and such of characters while still being given plenty of structure for grading and creation. the in class work really helped me to learn about what I was typing and why it was necessary.
+
 
